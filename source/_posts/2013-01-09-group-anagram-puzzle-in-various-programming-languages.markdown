@@ -40,7 +40,7 @@ words groupBy { word => word.toCharArray.sortWith(_ < _).mkString("") }
     result[key].push word
 ```
 
-``` ruby Group Anagrams [Scala]
+``` ruby Group Anagrams [Ruby]
 words = ["abc", "bca", "mkzp", "cba"]
 words.group_by { |w| w.chars.sort.join }
 ```
