@@ -9,22 +9,8 @@
   <meta name="author" content="Parth Patil">
 
   
-  <meta name="description" content="Group Anagrams [Java]1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-// Minus the boilerplate code
-String[] words = {&quot;abc&quot;, &quot;bca&quot;, &quot;mkzp& &hellip;">
+  <meta name="description" content="As many of you might know that the HBase shell is a jruby repl. So you can write ruby code in the
+shell. You can also save your custom ruby functions &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -79,6 +65,77 @@ String[] words = {&quot;abc&quot;, &quot;bca&quot;, &quot;mkzp& &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/01/10/custom-functions-in-hbase-shell/">Custom Functions in HBase Shell</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-10T09:04:00-08:00" pubdate data-updated="true">Jan 10<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>As many of you might know that the HBase shell is a jruby repl. So you can write ruby code in the
+shell. You can also save your custom ruby functions in <em>~/.irbrc</em> and the next time you
+start the hbase shell those functions will be available to you. At work I often need
+to truncate a bunch of HBase tables before I can begin my testing. I wanted to automate
+this. So I wrote the following custom function to truncate a list of tables and added
+it to my <em>~/.irbrc</em></p>
+
+<figure class='code'><figcaption><span>HBase shell custom function</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">truncate_tables</span><span class="p">()</span>
+</span><span class='line'>  <span class="n">tables</span> <span class="o">=</span> <span class="o">[</span>
+</span><span class='line'>    <span class="s1">&#39;table1&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s1">&#39;table2&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s1">&#39;table3&#39;</span>
+</span><span class='line'>  <span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">tables</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span><span class="o">|</span><span class="n">x</span><span class="o">|</span> <span class="n">truncate</span> <span class="n">x</span><span class="p">}</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You have to restart your HBase shell for this function to be available in the shell.
+Now this custom function can be invoked from the shell as follows</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ruby-1.9.2-p136 :001 > truncate_tables</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -193,6 +250,10 @@ String[] words = {&quot;abc&quot;, &quot;bca&quot;, &quot;mkzp& &hellip;">
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/01/10/custom-functions-in-hbase-shell/">Custom functions in HBase shell</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2013/01/09/group-anagram-puzzle-in-various-programming-languages/">Group Anagram puzzle in various programming languages</a>
