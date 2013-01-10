@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: 
+
+Sitemap: http://parth-patil.github.com/sitemap.xml 
