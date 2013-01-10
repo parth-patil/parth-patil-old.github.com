@@ -8,11 +8,11 @@ categories:
 - Tips
 ---
 As many of you might know that the HBase shell is a jruby repl. So you can write ruby code in the
-shell. You can also save your custom ruby functions in *~/.irbrc* and the next time you
+shell. You can also save your custom ruby functions in `~/.irbrc` and the next time you
 start the hbase shell those functions will be available to you. At work I often need
 to truncate a bunch of HBase tables before I can begin my testing. I wanted to automate
 this. So I wrote the following custom function to truncate a list of tables and added
-it to my *~/.irbrc*
+it to my `~/.irbrc`
 
 ```ruby HBase shell custom function
 def truncate_tables()
