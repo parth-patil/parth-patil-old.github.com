@@ -4,7 +4,7 @@
   <title><![CDATA[Parth Patil's Blog]]></title>
   <link href="http://parth-patil.github.com/atom.xml" rel="self"/>
   <link href="http://parth-patil.github.com/"/>
-  <updated>2013-01-10T13:44:17-08:00</updated>
+  <updated>2013-01-18T22:37:13-08:00</updated>
   <id>http://parth-patil.github.com/</id>
   <author>
     <name><![CDATA[Parth Patil]]></name>
@@ -12,6 +12,416 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Implementing Iterator Design Pattern in Scala]]></title>
+    <link href="http://parth-patil.github.com/blog/2013/01/18/implementing-iterator-design-pattern-in-scala/"/>
+    <updated>2013-01-18T22:32:00-08:00</updated>
+    <id>http://parth-patil.github.com/blog/2013/01/18/implementing-iterator-design-pattern-in-scala</id>
+    <content type="html"><![CDATA[<p>The other day I came across a puzzle that involved implementing a spreadsheet class. Like a
+regular spreadsheet the cells were referenced as A1, A2 etc .. I wanted to iterate the cells
+in the spreadsheet. My first stab at the implementation looked as follows</p>
+
+<figure class='code'><figcaption><span>Spreadsheet iteration v1</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">import</span> <span class="nn">scala.collection.mutable</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">object</span> <span class="nc">IteratorTest</span> <span class="o">{</span>
+</span><span class='line'>  <span class="k">def</span> <span class="n">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">val</span> <span class="n">height</span> <span class="k">=</span> <span class="mi">4</span>
+</span><span class='line'>    <span class="k">val</span> <span class="n">width</span> <span class="k">=</span> <span class="mi">4</span>
+</span><span class='line'>    <span class="k">val</span> <span class="n">ss</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">SpreadsheetV1</span><span class="o">(</span><span class="n">width</span><span class="o">,</span> <span class="n">height</span><span class="o">)</span>
+</span><span class='line'>    <span class="k">for</span> <span class="o">(</span><span class="n">i</span> <span class="k">&lt;-</span> <span class="mi">0</span> <span class="n">until</span> <span class="n">height</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">for</span> <span class="o">(</span><span class="n">j</span> <span class="k">&lt;-</span> <span class="mi">0</span> <span class="n">until</span> <span class="n">width</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="k">val</span> <span class="n">id</span> <span class="k">=</span> <span class="nc">Spreadsheet</span><span class="o">.</span><span class="n">getIdFromRowAndCol</span><span class="o">(</span><span class="n">i</span><span class="o">,</span> <span class="n">j</span><span class="o">)</span>
+</span><span class='line'>        <span class="n">println</span><span class="o">(</span><span class="s">&quot;id = &quot;</span> <span class="o">+</span> <span class="n">id</span><span class="o">)</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">SpreadsheetV1</span><span class="o">(</span><span class="n">width</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">height</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>  <span class="k">val</span> <span class="n">data</span> <span class="k">=</span> <span class="nc">Array</span><span class="o">.</span><span class="n">ofDim</span><span class="o">[</span><span class="kt">String</span><span class="o">](</span><span class="n">height</span><span class="o">,</span> <span class="n">width</span><span class="o">)</span>
+</span><span class='line'>  <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">i</span><span class="k">:</span><span class="kt">Int</span><span class="o">,</span> <span class="n">j</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="n">data</span><span class="o">(</span><span class="n">i</span><span class="o">)(</span><span class="n">j</span><span class="o">)</span>
+</span><span class='line'>  <span class="k">def</span> <span class="n">set</span><span class="o">(</span><span class="n">i</span><span class="k">:</span><span class="kt">Int</span><span class="o">,</span> <span class="n">j</span><span class="k">:</span><span class="kt">Int</span><span class="o">,</span> <span class="n">value</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="o">{</span> <span class="n">data</span><span class="o">(</span><span class="n">i</span><span class="o">)(</span><span class="n">j</span><span class="o">)</span> <span class="k">=</span> <span class="n">value</span> <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">object</span> <span class="nc">Spreadsheet</span> <span class="o">{</span>
+</span><span class='line'>  <span class="k">val</span> <span class="nc">Coordinates</span> <span class="k">=</span> <span class="s">&quot;&quot;&quot;([A-Z])(\d+)&quot;&quot;&quot;</span><span class="o">.</span><span class="n">r</span>
+</span><span class='line'>  <span class="k">val</span> <span class="n">asciiValueForA</span> <span class="k">=</span> <span class="-Symbol">&#39;A</span><span class="err">&#39;</span><span class="o">.</span><span class="n">toInt</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="cm">/**</span>
+</span><span class='line'><span class="cm">   * Given a cell id retuns the row and col as tuple</span>
+</span><span class='line'><span class="cm">   * eg. A2 -&gt; (0, 1)</span>
+</span><span class='line'><span class="cm">   */</span>
+</span><span class='line'>  <span class="k">def</span> <span class="n">getRowAndColFromId</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="o">(</span><span class="kt">Int</span><span class="o">,</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">val</span> <span class="nc">Coordinates</span><span class="o">(</span><span class="n">row</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">col</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">=</span> <span class="n">id</span> <span class="c1">// apply the regex to extract row &amp; col</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Now convert these to actual Int indexes in our 2d array</span>
+</span><span class='line'>    <span class="k">val</span> <span class="n">realRow</span> <span class="k">=</span> <span class="n">row</span><span class="o">.</span><span class="n">toCharArray</span><span class="o">()(</span><span class="mi">0</span><span class="o">).</span><span class="n">toInt</span> <span class="o">-</span> <span class="n">asciiValueForA</span>
+</span><span class='line'>    <span class="k">val</span> <span class="n">realCol</span> <span class="k">=</span> <span class="n">col</span><span class="o">.</span><span class="n">toInt</span> <span class="o">-</span><span class="mi">1</span>
+</span><span class='line'>    <span class="o">(</span><span class="n">realRow</span><span class="o">,</span> <span class="n">realCol</span><span class="o">)</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="cm">/**</span>
+</span><span class='line'><span class="cm">   * Given row and col returns id</span>
+</span><span class='line'><span class="cm">   * eg (0,0) =&gt; A1, (0,1) =&gt; A2 etc</span>
+</span><span class='line'><span class="cm">   */</span>
+</span><span class='line'>  <span class="k">def</span> <span class="n">getIdFromRowAndCol</span><span class="o">(</span><span class="n">row</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">col</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class='line'>    <span class="o">(</span><span class="n">asciiValueForA</span> <span class="o">+</span> <span class="n">row</span><span class="o">).</span><span class="n">toChar</span> <span class="o">+</span> <span class="o">(</span><span class="n">col</span> <span class="o">+</span> <span class="mi">1</span><span class="o">).</span><span class="n">toString</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>But its possible to have a nicer interface to iterate over the cells by implementing Iterator
+trait. It also results in better encapsulation of the internal structure of the Spreadsheet
+class. Following is an implementation of Spreadsheet class with Iterator trait.</p>
+
+<figure class='code'><figcaption><span>Spreadsheet iteration v2</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">import</span> <span class="nn">scala.collection.mutable</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">object</span> <span class="nc">IteratorTest</span> <span class="o">{</span>
+</span><span class='line'>  <span class="k">def</span> <span class="n">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">val</span> <span class="n">height</span> <span class="k">=</span> <span class="mi">4</span>
+</span><span class='line'>    <span class="k">val</span> <span class="n">width</span> <span class="k">=</span> <span class="mi">4</span>
+</span><span class='line'>    <span class="k">val</span> <span class="n">ss</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">SpreadsheetV2</span><span class="o">(</span><span class="n">width</span><span class="o">,</span> <span class="n">height</span><span class="o">)</span>
+</span><span class='line'>    <span class="k">for</span> <span class="o">(</span><span class="n">id</span> <span class="k">&lt;-</span> <span class="n">ss</span><span class="o">)</span>
+</span><span class='line'>      <span class="n">println</span><span class="o">(</span><span class="n">id</span><span class="o">)</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">SpreadsheetV2</span><span class="o">(</span><span class="n">width</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">height</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Iterator</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="o">{</span>
+</span><span class='line'>  <span class="k">import</span> <span class="nn">Spreadsheet._</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">val</span> <span class="n">data</span> <span class="k">=</span> <span class="nc">Array</span><span class="o">.</span><span class="n">ofDim</span><span class="o">[</span><span class="kt">String</span><span class="o">](</span><span class="n">height</span><span class="o">,</span> <span class="n">width</span><span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">val</span> <span class="o">(</span><span class="n">row</span><span class="o">,</span> <span class="n">col</span><span class="o">)</span> <span class="k">=</span> <span class="n">getRowAndColFromId</span><span class="o">(</span><span class="n">id</span><span class="o">)</span>
+</span><span class='line'>    <span class="n">data</span><span class="o">(</span><span class="n">row</span><span class="o">)(</span><span class="n">col</span><span class="o">)</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="n">set</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">value</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">val</span> <span class="o">(</span><span class="n">row</span><span class="o">,</span> <span class="n">col</span><span class="o">)</span> <span class="k">=</span> <span class="n">getRowAndColFromId</span><span class="o">(</span><span class="n">id</span><span class="o">)</span>
+</span><span class='line'>    <span class="n">data</span><span class="o">(</span><span class="n">row</span><span class="o">)(</span><span class="n">col</span><span class="o">)</span>  <span class="k">=</span> <span class="n">value</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//------------------------</span>
+</span><span class='line'>  <span class="c1">// Iterator Implementation</span>
+</span><span class='line'>  <span class="c1">//------------------------</span>
+</span><span class='line'>  <span class="k">protected</span> <span class="k">var</span> <span class="nc">_nextRow</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>  <span class="k">protected</span> <span class="k">var</span> <span class="nc">_nextCol</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>  <span class="k">protected</span> <span class="k">var</span> <span class="nc">_next</span><span class="k">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="kc">null</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="n">hasNext</span> <span class="k">=</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="o">(</span><span class="nc">_next</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span>
+</span><span class='line'>      <span class="kc">true</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>      <span class="n">computeNext</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="n">next</span> <span class="k">=</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="o">(</span><span class="n">hasNext</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">val</span> <span class="n">result</span> <span class="k">=</span> <span class="nc">_next</span>
+</span><span class='line'>      <span class="nc">_next</span> <span class="k">=</span> <span class="kc">null</span>
+</span><span class='line'>      <span class="n">result</span>
+</span><span class='line'>    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">throw</span> <span class="k">new</span> <span class="nc">NoSuchElementException</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">protected</span> <span class="k">def</span> <span class="n">computeNext</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="o">(</span><span class="nc">_nextRow</span> <span class="o">&lt;</span> <span class="n">height</span> <span class="o">&amp;&amp;</span> <span class="nc">_nextCol</span> <span class="o">&lt;</span> <span class="n">width</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="nc">_next</span> <span class="k">=</span> <span class="n">getIdFromRowAndCol</span><span class="o">(</span><span class="nc">_nextRow</span><span class="o">,</span> <span class="nc">_nextCol</span><span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">if</span> <span class="o">(</span><span class="nc">_nextCol</span> <span class="o">==</span> <span class="o">(</span><span class="n">width</span> <span class="o">-</span><span class="mi">1</span><span class="o">))</span> <span class="o">{</span>
+</span><span class='line'>        <span class="nc">_nextCol</span> <span class="k">=</span> <span class="mi">0</span>
+</span><span class='line'>        <span class="nc">_nextRow</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span class='line'>      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span><span class='line'>        <span class="nc">_nextCol</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="kc">true</span>
+</span><span class='line'>    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span><span class='line'>      <span class="kc">false</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The iterator code is not a core part of the Spreadsheet&#8217;s logic so there is no need for the
+Spreadsheet class to directly implement Iterator. The iterator implementation can be moved out
+into a separate class and the Spreadsheet class&#8217;s implementation can be kept simple.</p>
+
+<figure class='code'><figcaption><span>Spreadsheet iteration v3</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">import</span> <span class="nn">scala.collection.mutable</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">object</span> <span class="nc">IteratorTest</span> <span class="o">{</span>
+</span><span class='line'>  <span class="k">def</span> <span class="n">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">val</span> <span class="n">height</span> <span class="k">=</span> <span class="mi">4</span>
+</span><span class='line'>    <span class="k">val</span> <span class="n">width</span> <span class="k">=</span> <span class="mi">4</span>
+</span><span class='line'>    <span class="k">val</span> <span class="n">ss</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">SpreadsheetV3</span><span class="o">(</span><span class="n">width</span><span class="o">,</span> <span class="n">height</span><span class="o">)</span>
+</span><span class='line'>    <span class="k">for</span> <span class="o">(</span><span class="n">id</span> <span class="k">&lt;-</span> <span class="n">ss</span><span class="o">.</span><span class="n">getIterator</span><span class="o">)</span>
+</span><span class='line'>      <span class="n">println</span><span class="o">(</span><span class="n">id</span><span class="o">)</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">SpreadsheetV3</span><span class="o">(</span><span class="n">width</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">height</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>  <span class="k">import</span> <span class="nn">Spreadsheet._</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">val</span> <span class="n">data</span> <span class="k">=</span> <span class="nc">Array</span><span class="o">.</span><span class="n">ofDim</span><span class="o">[</span><span class="kt">String</span><span class="o">](</span><span class="n">height</span><span class="o">,</span> <span class="n">width</span><span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">val</span> <span class="o">(</span><span class="n">row</span><span class="o">,</span> <span class="n">col</span><span class="o">)</span> <span class="k">=</span> <span class="n">getRowAndColFromId</span><span class="o">(</span><span class="n">id</span><span class="o">)</span>
+</span><span class='line'>    <span class="n">data</span><span class="o">(</span><span class="n">row</span><span class="o">)(</span><span class="n">col</span><span class="o">)</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="n">set</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">value</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">val</span> <span class="o">(</span><span class="n">row</span><span class="o">,</span> <span class="n">col</span><span class="o">)</span> <span class="k">=</span> <span class="n">getRowAndColFromId</span><span class="o">(</span><span class="n">id</span><span class="o">)</span>
+</span><span class='line'>    <span class="n">data</span><span class="o">(</span><span class="n">row</span><span class="o">)(</span><span class="n">col</span><span class="o">)</span>  <span class="k">=</span> <span class="n">value</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="n">getIterator</span><span class="o">()</span><span class="k">:</span> <span class="kt">Iterator</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">new</span> <span class="nc">SpreadsheetIterator</span><span class="o">(</span><span class="n">width</span><span class="o">,</span> <span class="n">height</span><span class="o">)</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">SpreadsheetIterator</span><span class="o">(</span><span class="n">width</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">height</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Iterator</span> <span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="o">{</span>
+</span><span class='line'>  <span class="k">import</span> <span class="nn">Spreadsheet._</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//------------------------</span>
+</span><span class='line'>  <span class="c1">// Iterator Implementation</span>
+</span><span class='line'>  <span class="c1">//------------------------</span>
+</span><span class='line'>  <span class="k">protected</span> <span class="k">var</span> <span class="nc">_nextRow</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>  <span class="k">protected</span> <span class="k">var</span> <span class="nc">_nextCol</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>  <span class="k">protected</span> <span class="k">var</span> <span class="nc">_next</span><span class="k">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="kc">null</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="n">hasNext</span> <span class="k">=</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="o">(</span><span class="nc">_next</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span>
+</span><span class='line'>      <span class="kc">true</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>      <span class="n">computeNext</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="n">next</span> <span class="k">=</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="o">(</span><span class="n">hasNext</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">val</span> <span class="n">result</span> <span class="k">=</span> <span class="nc">_next</span>
+</span><span class='line'>      <span class="nc">_next</span> <span class="k">=</span> <span class="kc">null</span>
+</span><span class='line'>      <span class="n">result</span>
+</span><span class='line'>    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">throw</span> <span class="k">new</span> <span class="nc">NoSuchElementException</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">protected</span> <span class="k">def</span> <span class="n">computeNext</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="o">(</span><span class="nc">_nextRow</span> <span class="o">&lt;</span> <span class="n">height</span> <span class="o">&amp;&amp;</span> <span class="nc">_nextCol</span> <span class="o">&lt;</span> <span class="n">width</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="nc">_next</span> <span class="k">=</span> <span class="n">getIdFromRowAndCol</span><span class="o">(</span><span class="nc">_nextRow</span><span class="o">,</span> <span class="nc">_nextCol</span><span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">if</span> <span class="o">(</span><span class="nc">_nextCol</span> <span class="o">==</span> <span class="o">(</span><span class="n">width</span> <span class="o">-</span><span class="mi">1</span><span class="o">))</span> <span class="o">{</span>
+</span><span class='line'>        <span class="nc">_nextCol</span> <span class="k">=</span> <span class="mi">0</span>
+</span><span class='line'>        <span class="nc">_nextRow</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span class='line'>      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span><span class='line'>        <span class="nc">_nextCol</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="kc">true</span>
+</span><span class='line'>    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span><span class='line'>      <span class="kc">false</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Custom functions in HBase shell]]></title>

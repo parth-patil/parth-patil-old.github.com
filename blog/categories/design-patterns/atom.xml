@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Design Patterns | Parth Patil's Blog]]></title>
+  <link href="http://parth-patil.github.com/blog/categories/design-patterns/atom.xml" rel="self"/>
+  <link href="http://parth-patil.github.com/"/>
+  <updated>2013-01-18T22:37:13-08:00</updated>
+  <id>http://parth-patil.github.com/</id>
+  <author>
+    <name><![CDATA[Parth Patil]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Implementing Iterator Design Pattern in Scala]]></title>
+    <link href="http://parth-patil.github.com/blog/2013/01/18/implementing-iterator-design-pattern-in-scala/"/>
+    <updated>2013-01-18T22:32:00-08:00</updated>
+    <id>http://parth-patil.github.com/blog/2013/01/18/implementing-iterator-design-pattern-in-scala</id>
+    <content type="html"><![CDATA[<p>The other day I came across a puzzle that involved implementing a spreadsheet class. Like a
+regular spreadsheet the cells were referenced as A1, A2 etc .. I wanted to iterate the cells
+in the spreadsheet. My first stab at the implementation looked as follows</p>
+
+<p>``` scala Spreadsheet iteration v1
+import scala.collection.mutable</p>
+
+<p>object IteratorTest {
+  def main(args: Array[String]) {</p>
+
+<pre><code>val height = 4
+val width = 4
+val ss = new SpreadsheetV1(width, height)
+for (i &lt;- 0 until height) {
+  for (j &lt;- 0 until width) {
+    val id = Spreadsheet.getIdFromRowAndCol(i, j)
+    println("id = " + id)
+  }
+}
+</code></pre>
+
+<p>  }
+}</p>
+
+<p>class SpreadsheetV1(width: Int, height: Int) {
+  val data = Array.ofDim<a href="height,%20width">String</a>
+  def get(i:Int, j:Int) = data(i)(j)
+  def set(i:Int, j:Int, value: String) { data(i)(j) = value }
+}</p>
+
+<p>object Spreadsheet {
+  val Coordinates = """([A-Z])(\d+)""".r
+  val asciiValueForA = 'A'.toInt</p>
+
+<p>  /<em>*
+   * Given a cell id retuns the row and col as tuple
+   * eg. A2 -> (0, 1)
+   </em>/
+  def getRowAndColFromId(id: String): (Int, Int) = {</p>
+
+<pre><code>val Coordinates(row: String, col: String) = id // apply the regex to extract row &amp; col
+
+// Now convert these to actual Int indexes in our 2d array
+val realRow = row.toCharArray()(0).toInt - asciiValueForA
+val realCol = col.toInt -1
+(realRow, realCol)
+</code></pre>
+
+<p>  }</p>
+
+<p>  /<em>*
+   * Given row and col returns id
+   * eg (0,0) => A1, (0,1) => A2 etc
+   </em>/
+  def getIdFromRowAndCol(row: Int, col: Int): String = {</p>
+
+<pre><code>(asciiValueForA + row).toChar + (col + 1).toString
+</code></pre>
+
+<p>  }
+}
+```</p>
+
+<p>But its possible to have a nicer interface to iterate over the cells by implementing Iterator
+trait. It also results in better encapsulation of the internal structure of the Spreadsheet
+class. Following is an implementation of Spreadsheet class with Iterator trait.</p>
+
+<p>``` scala Spreadsheet iteration v2
+import scala.collection.mutable</p>
+
+<p>object IteratorTest {
+  def main(args: Array[String]) {</p>
+
+<pre><code>val height = 4
+val width = 4
+val ss = new SpreadsheetV2(width, height)
+for (id &lt;- ss)
+  println(id)
+</code></pre>
+
+<p>  }
+}</p>
+
+<p>class SpreadsheetV2(width: Int, height: Int) extends Iterator[String] {
+  import Spreadsheet._</p>
+
+<p>  val data = Array.ofDim<a href="height,%20width">String</a></p>
+
+<p>  def get(id: String): String = {</p>
+
+<pre><code>val (row, col) = getRowAndColFromId(id)
+data(row)(col)
+</code></pre>
+
+<p>  }</p>
+
+<p>  def set(id: String, value: String) {</p>
+
+<pre><code>val (row, col) = getRowAndColFromId(id)
+data(row)(col)  = value
+</code></pre>
+
+<p>  }</p>
+
+<p>  //------------------------
+  // Iterator Implementation
+  //------------------------
+  protected var <em>nextRow: Int = 0
+  protected var </em>nextCol: Int = 0
+  protected var _next: String = null</p>
+
+<p>  def hasNext = {</p>
+
+<pre><code>if (_next != null)
+  true
+else
+  computeNext
+</code></pre>
+
+<p>  }</p>
+
+<p>  def next = {</p>
+
+<pre><code>if (hasNext) {
+  val result = _next
+  _next = null
+  result
+} else {
+  throw new NoSuchElementException
+}
+</code></pre>
+
+<p>  }</p>
+
+<p>  protected def computeNext: Boolean = {</p>
+
+<pre><code>if (_nextRow &lt; height &amp;&amp; _nextCol &lt; width) {
+  _next = getIdFromRowAndCol(_nextRow, _nextCol)
+
+  if (_nextCol == (width -1)) {
+    _nextCol = 0
+    _nextRow += 1
+  } else {
+    _nextCol += 1
+  }
+
+  true
+} else {
+  false
+}
+</code></pre>
+
+<p>  }
+}
+```</p>
+
+<p>The iterator code is not a core part of the Spreadsheet's logic so there is no need for the
+Spreadsheet class to directly implement Iterator. The iterator implementation can be moved out
+into a separate class and the Spreadsheet class's implementation can be kept simple.</p>
+
+<p>``` scala Spreadsheet iteration v3
+import scala.collection.mutable</p>
+
+<p>object IteratorTest {
+  def main(args: Array[String]) {</p>
+
+<pre><code>val height = 4
+val width = 4
+val ss = new SpreadsheetV3(width, height)
+for (id &lt;- ss.getIterator)
+  println(id)
+</code></pre>
+
+<p>  }
+}</p>
+
+<p>class SpreadsheetV3(width: Int, height: Int) {
+  import Spreadsheet._</p>
+
+<p>  val data = Array.ofDim<a href="height,%20width">String</a></p>
+
+<p>  def get(id: String): String = {</p>
+
+<pre><code>val (row, col) = getRowAndColFromId(id)
+data(row)(col)
+</code></pre>
+
+<p>  }</p>
+
+<p>  def set(id: String, value: String) {</p>
+
+<pre><code>val (row, col) = getRowAndColFromId(id)
+data(row)(col)  = value
+</code></pre>
+
+<p>  }</p>
+
+<p>  def getIterator(): Iterator[String] = {</p>
+
+<pre><code>new SpreadsheetIterator(width, height)
+</code></pre>
+
+<p>  }
+}</p>
+
+<p>class SpreadsheetIterator(width: Int, height: Int) extends Iterator [String] {
+  import Spreadsheet._</p>
+
+<p>  //------------------------
+  // Iterator Implementation
+  //------------------------
+  protected var <em>nextRow: Int = 0
+  protected var </em>nextCol: Int = 0
+  protected var _next: String = null</p>
+
+<p>  def hasNext = {</p>
+
+<pre><code>if (_next != null)
+  true
+else
+  computeNext
+</code></pre>
+
+<p>  }</p>
+
+<p>  def next = {</p>
+
+<pre><code>if (hasNext) {
+  val result = _next
+  _next = null
+  result
+} else {
+  throw new NoSuchElementException
+}
+</code></pre>
+
+<p>  }</p>
+
+<p>  protected def computeNext: Boolean = {</p>
+
+<pre><code>if (_nextRow &lt; height &amp;&amp; _nextCol &lt; width) {
+  _next = getIdFromRowAndCol(_nextRow, _nextCol)
+
+  if (_nextCol == (width -1)) {
+    _nextCol = 0
+    _nextRow += 1
+  } else {
+    _nextCol += 1
+  }
+
+  true
+} else {
+  false
+}
+</code></pre>
+
+<p>  }
+}
+```</p>
+]]></content>
+  </entry>
+  
+</feed>

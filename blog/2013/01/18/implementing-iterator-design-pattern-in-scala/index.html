@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Parth Patil's Blog</title>
+  <title>Implementing Iterator Design Pattern in Scala - Parth Patil's Blog</title>
   <meta name="author" content="Parth Patil">
 
   
@@ -19,7 +19,7 @@ regular spreadsheet the cells were referenced as A1, A2 &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://parth-patil.github.com/">
+  <link rel="canonical" href="http://parth-patil.github.com/blog/2013/01/18/implementing-iterator-design-pattern-in-scala/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -63,15 +63,12 @@ regular spreadsheet the cells were referenced as A1, A2 &hellip;">
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2013/01/18/implementing-iterator-design-pattern-in-scala/">Implementing Iterator Design Pattern in Scala</a></h1>
+      <h1 class="entry-title">Implementing Iterator Design Pattern in Scala</h1>
     
     
       <p class="meta">
@@ -94,7 +91,7 @@ regular spreadsheet the cells were referenced as A1, A2 &hellip;">
   </header>
 
 
-  <div class="entry-content"><p>The other day I came across a puzzle that involved implementing a spreadsheet class. Like a
+<div class="entry-content"><p>The other day I came across a puzzle that involved implementing a spreadsheet class. Like a
 regular spreadsheet the cells were referenced as A1, A2 etc .. I wanted to iterate the cells
 in the spreadsheet. My first stab at the implementation looked as follows</p>
 
@@ -497,97 +494,16 @@ into a separate class and the Spreadsheet class&#8217;s implementation can be ke
 </span></code></pre></td></tr></table></div></figure>
 
 </div>
-  
-  
 
 
-    </article>
-  
-  
-    <article>
+  <footer>
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/01/10/custom-functions-in-hbase-shell/">Custom Functions in HBase Shell</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
   
 
+<span class="byline author vcard">Posted by <span class="fn">Parth Patil</span></span>
 
-<time datetime="2013-01-10T09:04:00-08:00" pubdate data-updated="true">Jan 10<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>As many of you might know that the HBase shell is a jruby repl. So you can write ruby code in the
-shell. You can also save your custom ruby functions in <code>~/.irbrc</code> and the next time you
-start the hbase shell those functions will be available to you. At work I often need
-to truncate a bunch of HBase tables before I can begin my testing. I wanted to automate
-this. So I wrote the following custom function to truncate a list of tables and added
-it to my <code>~/.irbrc</code></p>
-
-<figure class='code'><figcaption><span>HBase shell custom function</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">truncate_tables</span><span class="p">()</span>
-</span><span class='line'>  <span class="n">tables</span> <span class="o">=</span> <span class="o">[</span>
-</span><span class='line'>    <span class="s1">&#39;table1&#39;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s1">&#39;table2&#39;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s1">&#39;table3&#39;</span>
-</span><span class='line'>  <span class="o">]</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">tables</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span><span class="o">|</span><span class="n">x</span><span class="o">|</span> <span class="n">truncate</span> <span class="n">x</span><span class="p">}</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>You have to restart your HBase shell for this function to be available in the shell.
-Now this custom function can be invoked from the shell as follows</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>ruby-1.9.2-p136 :001 > truncate_tables</span></code></pre></td></tr></table></div></figure>
-
-
-<p>For more information refer to the following links:</p>
-
-<p><a href="http://wiki.apache.org/hadoop/Hbase/Shell">HBase Wiki</a></p>
-
-<p><a href="http://stackoverflow.com/questions/7256100/how-to-scan-hbase-from-hbase-shell-using-filter">Stack Overflow Question</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/01/09/group-anagram-puzzle-in-various-programming-languages/">Group Anagram Puzzle in Various Programming Languages</a></h1>
-    
-    
-      <p class="meta">
-        
 
 
 
@@ -599,93 +515,38 @@ Now this custom function can be invoked from the shell as follows</p>
   
 
 
-<time datetime="2013-01-09T22:13:00-08:00" pubdate data-updated="true">Jan 9<span>th</span>, 2013</time>
-        
-      </p>
+<time datetime="2013-01-18T22:32:00-08:00" pubdate data-updated="true">Jan 18<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/design-patterns/'>Design Patterns</a>, <a class='category' href='/blog/categories/scala/'>Scala</a>
+  
+</span>
+
+
+    </p>
     
-  </header>
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://parth-patil.github.com/blog/2013/01/18/implementing-iterator-design-pattern-in-scala/" data-via="" data-counturl="http://parth-patil.github.com/blog/2013/01/18/implementing-iterator-design-pattern-in-scala/" >Tweet</a>
+  
+  
+  
+</div>
 
-
-  <div class="entry-content"><figure class='code'><figcaption><span>Group Anagrams [Java]</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="c1">// Minus the boilerplate code</span>
-</span><span class='line'><span class="n">String</span><span class="o">[]</span> <span class="n">words</span> <span class="o">=</span> <span class="o">{</span><span class="s">&quot;abc&quot;</span><span class="o">,</span> <span class="s">&quot;bca&quot;</span><span class="o">,</span> <span class="s">&quot;mkzp&quot;</span><span class="o">,</span> <span class="s">&quot;cba&quot;</span><span class="o">};</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;</span> <span class="n">groups</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;();</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">for</span> <span class="o">(</span><span class="n">String</span> <span class="nl">w:</span> <span class="n">words</span><span class="o">)</span> <span class="o">{</span>
-</span><span class='line'>  <span class="kt">char</span><span class="o">[]</span> <span class="n">chars</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="na">toCharArray</span><span class="o">();</span>
-</span><span class='line'>  <span class="n">Arrays</span><span class="o">.</span><span class="na">sort</span><span class="o">(</span><span class="n">chars</span><span class="o">);</span>
-</span><span class='line'>  <span class="n">String</span> <span class="n">normalized</span> <span class="o">=</span> <span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="n">chars</span><span class="o">);</span>
-</span><span class='line'>  <span class="k">if</span> <span class="o">(!</span><span class="n">groups</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">normalized</span><span class="o">))</span>
-</span><span class='line'>    <span class="n">groups</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">normalized</span><span class="o">,</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;());</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">groups</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">normalized</span><span class="o">).</span><span class="na">add</span><span class="o">(</span><span class="n">w</span><span class="o">);</span>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span>Group Anagrams [Scala]</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="c1">// Minus the boilerplate code</span>
-</span><span class='line'><span class="k">val</span> <span class="n">words</span> <span class="k">=</span> <span class="nc">Seq</span><span class="o">(</span><span class="s">&quot;abc&quot;</span><span class="o">,</span> <span class="s">&quot;bca&quot;</span><span class="o">,</span> <span class="s">&quot;mkzp&quot;</span><span class="o">,</span> <span class="s">&quot;cba&quot;</span><span class="o">)</span>
-</span><span class='line'><span class="n">words</span> <span class="n">groupBy</span> <span class="o">{</span> <span class="n">word</span> <span class="k">=&gt;</span> <span class="n">word</span><span class="o">.</span><span class="n">toCharArray</span><span class="o">.</span><span class="n">sortWith</span><span class="o">(</span><span class="k">_</span> <span class="o">&lt;</span> <span class="k">_</span><span class="o">).</span><span class="n">mkString</span><span class="o">(</span><span class="s">&quot;&quot;</span><span class="o">)</span> <span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span>Group Anagrams [Coffeescript]</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'>  <span class="nv">words = </span><span class="p">[</span><span class="s">&quot;abc&quot;</span><span class="p">,</span> <span class="s">&quot;bca&quot;</span><span class="p">,</span> <span class="s">&quot;mkzp&quot;</span><span class="p">,</span> <span class="s">&quot;cba&quot;</span><span class="p">]</span>
-</span><span class='line'>  <span class="nv">result = </span><span class="p">{}</span>
-</span><span class='line'>  <span class="k">for</span> <span class="nx">word</span> <span class="k">in</span> <span class="nx">words</span>
-</span><span class='line'>    <span class="nv">key = </span><span class="p">(</span><span class="nx">word</span><span class="p">.</span><span class="nx">split</span> <span class="s">&#39;&#39;</span><span class="p">).</span><span class="nx">sort</span><span class="p">().</span><span class="nx">join</span> <span class="s">&#39;&#39;</span>
-</span><span class='line'>    <span class="nx">result</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="o">not</span> <span class="nx">result</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span><span class="o">?</span>
-</span><span class='line'>    <span class="nx">result</span><span class="p">[</span><span class="nx">key</span><span class="p">].</span><span class="nx">push</span> <span class="nx">word</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span>Group Anagrams [Ruby]</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">words</span> <span class="o">=</span> <span class="o">[</span><span class="s2">&quot;abc&quot;</span><span class="p">,</span> <span class="s2">&quot;bca&quot;</span><span class="p">,</span> <span class="s2">&quot;mkzp&quot;</span><span class="p">,</span> <span class="s2">&quot;cba&quot;</span><span class="o">]</span>
-</span><span class='line'><span class="n">words</span><span class="o">.</span><span class="n">group_by</span> <span class="p">{</span> <span class="o">|</span><span class="n">w</span><span class="o">|</span> <span class="n">w</span><span class="o">.</span><span class="n">chars</span><span class="o">.</span><span class="n">sort</span><span class="o">.</span><span class="n">join</span> <span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/01/10/custom-functions-in-hbase-shell/" title="Previous Post: Custom functions in HBase shell">&laquo; Custom functions in HBase shell</a>
+      
+      
+    </p>
+  </footer>
+</article>
 
 </div>
-  
-  
 
-
-    </article>
-  
-  <div class="pagination">
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
-</div>
 <aside class="sidebar">
   
     <section>
@@ -714,6 +575,7 @@ Now this custom function can be invoked from the shell as follows</p>
 
   
 </aside>
+
 
     </div>
   </div>
