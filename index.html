@@ -9,8 +9,8 @@
   <meta name="author" content="Parth Patil">
 
   
-  <meta name="description" content="The other day I came across a puzzle that involved implementing a spreadsheet class. Like a
-regular spreadsheet the cells were referenced as A1, A2 &hellip;">
+  <meta name="description" content="I read about a neat trick to do user analytics using Redis BitSets in this article
+And I thought to hack up a simple finagle(finatra) based service &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +77,49 @@ regular spreadsheet the cells were referenced as A1, A2 &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/03/21/using-bitsets-for-user-analytics/">Using BitSets for User Analytics</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-03-21T23:55:00-07:00" pubdate data-updated="true">Mar 21<span>st</span>, 2013</time>
+        
+         | <a href="/blog/2013/03/21/using-bitsets-for-user-analytics/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I read about a neat trick to do user analytics using Redis BitSets in <a href="http://blog.getspool.com/2011/11/29/fast-easy-realtime-metrics-using-redis-bitmaps/">this article</a>
+And I thought to hack up a simple finagle(finatra) based service that provides an API to do this kind of user analytics without needing Redis.</p>
+
+<p>For BitSets I used the <a href="https://code.google.com/p/javaewah/">javaewah library</a></p>
+
+<p>So I have started a small project called cardino-db and you can check the source code <a href="https://github.com/parth-patil/cardino-db">here</a></p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -709,6 +752,10 @@ Now this custom function can be invoked from the shell as follows</p>
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/03/21/using-bitsets-for-user-analytics/">Using BitSets for User Analytics</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2013/01/18/implementing-iterator-design-pattern-in-scala/">Implementing Iterator Design Pattern in Scala</a>
