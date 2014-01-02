@@ -1,0 +1,20 @@
+<div class="highlight"><pre><span class="k">package</span> <span class="nn">com.parthpatil.jvmstatsd</span>
+
+<span class="k">import</span> <span class="nn">akka.actor.ActorSystem</span>
+<span class="k">import</span> <span class="nn">scala.concurrent.ExecutionContext.Implicits.global</span>
+
+<span class="k">class</span> <span class="nc">SampleUsage</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span> <span class="o">{</span>
+    <span class="k">val</span> <span class="n">actorSystem</span> <span class="k">=</span> <span class="nc">ActorSystem</span><span class="o">(</span><span class="s">&quot;statsd-actor-system&quot;</span><span class="o">)</span>
+    <span class="k">val</span> <span class="n">statsD</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">StatsD</span><span class="o">(</span>
+      <span class="n">context</span> <span class="k">=</span> <span class="n">actorSystem</span><span class="o">,</span>
+      <span class="n">host</span> <span class="k">=</span> <span class="s">&quot;localhost&quot;</span><span class="o">,</span>
+      <span class="n">port</span> <span class="k">=</span> <span class="mi">8192</span><span class="o">)</span>
+
+    <span class="k">val</span> <span class="n">statsSender</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">StatsSender</span><span class="o">(</span><span class="n">statsD</span><span class="o">)</span>
+
+    <span class="c1">// Create the JvmStatsTask that publishes stats every 10 secs</span>
+    <span class="n">statsSender</span><span class="o">.</span><span class="n">addTask</span><span class="o">(</span><span class="k">new</span> <span class="nc">JvmStatsTask</span><span class="o">,</span> <span class="mi">10</span><span class="o">)</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>

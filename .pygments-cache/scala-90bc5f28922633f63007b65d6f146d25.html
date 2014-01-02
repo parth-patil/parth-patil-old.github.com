@@ -1,0 +1,14 @@
+<div class="highlight"><pre><span class="k">package</span> <span class="nn">com.parthpatil.jvmstatsd</span>
+
+<span class="k">import</span> <span class="nn">java.text.DecimalFormat</span>
+
+<span class="k">class</span> <span class="nc">StatsTask</span><span class="o">()</span> <span class="k">extends</span> <span class="nc">Runnable</span> <span class="o">{</span>
+  <span class="k">protected</span> <span class="k">var</span> <span class="n">statsd</span><span class="k">:</span> <span class="kt">StatsD</span> <span class="o">=</span> <span class="kc">null</span>
+
+  <span class="c1">// formatter to remove scientific notation from doubles</span>
+  <span class="k">val</span> <span class="n">formatter</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">DecimalFormat</span><span class="o">(</span><span class="s">&quot;#&quot;</span><span class="o">)</span>
+
+  <span class="k">override</span> <span class="k">def</span> <span class="n">run</span><span class="o">()</span> <span class="o">{</span> <span class="o">}</span>
+  <span class="k">def</span> <span class="n">setStatsD</span><span class="o">(</span><span class="n">sd</span><span class="k">:</span> <span class="kt">StatsD</span><span class="o">)</span> <span class="o">{</span> <span class="n">statsd</span> <span class="k">=</span> <span class="n">sd</span> <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>

@@ -1,0 +1,7 @@
+<div class="highlight"><pre>  <span class="nv">words = </span><span class="p">[</span><span class="s">&quot;abc&quot;</span><span class="p">,</span> <span class="s">&quot;bca&quot;</span><span class="p">,</span> <span class="s">&quot;mkzp&quot;</span><span class="p">,</span> <span class="s">&quot;cba&quot;</span><span class="p">]</span>
+  <span class="nv">result = </span><span class="p">{}</span>
+  <span class="k">for</span> <span class="nx">word</span> <span class="k">in</span> <span class="nx">words</span>
+    <span class="nv">key = </span><span class="p">(</span><span class="nx">word</span><span class="p">.</span><span class="nx">split</span> <span class="s">&#39;&#39;</span><span class="p">).</span><span class="nx">sort</span><span class="p">().</span><span class="nx">join</span> <span class="s">&#39;&#39;</span>
+    <span class="nx">result</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="o">not</span> <span class="nx">result</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span><span class="o">?</span>
+    <span class="nx">result</span><span class="p">[</span><span class="nx">key</span><span class="p">].</span><span class="nx">push</span> <span class="nx">word</span>
+</pre></div>

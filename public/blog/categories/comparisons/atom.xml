@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Comparisons | Parth Patil's Blog]]></title>
+  <link href="http://parth-patil.github.com/blog/categories/comparisons/atom.xml" rel="self"/>
+  <link href="http://parth-patil.github.com/"/>
+  <updated>2014-01-01T20:53:52-08:00</updated>
+  <id>http://parth-patil.github.com/</id>
+  <author>
+    <name><![CDATA[Parth Patil]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Group Anagram puzzle in various programming languages]]></title>
+    <link href="http://parth-patil.github.com/blog/2013/01/09/group-anagram-puzzle-in-various-programming-languages/"/>
+    <updated>2013-01-09T22:13:00-08:00</updated>
+    <id>http://parth-patil.github.com/blog/2013/01/09/group-anagram-puzzle-in-various-programming-languages</id>
+    <content type="html"><![CDATA[<p>``` java Group Anagrams [Java]</p>
+
+<pre><code>// Minus the boilerplate code
+String[] words = {"abc", "bca", "mkzp", "cba"};
+
+HashMap&lt;String, ArrayList&lt;String&gt;&gt; groups = new HashMap&lt;String, ArrayList&lt;String&gt;&gt;();
+
+for (String w: words) {
+  char[] chars = w.toCharArray();
+  Arrays.sort(chars);
+  String normalized = new String(chars);
+  if (!groups.containsKey(normalized))
+    groups.put(normalized, new ArrayList&lt;String&gt;());
+
+  groups.get(normalized).add(w);
+}
+</code></pre>
+
+<p>```</p>
+
+<p><code>scala Group Anagrams [Scala]
+// Minus the boilerplate code
+val words = Seq("abc", "bca", "mkzp", "cba")
+words groupBy { word =&gt; word.toCharArray.sortWith(_ &lt; _).mkString("") }
+</code></p>
+
+<p>``` coffeescript Group Anagrams [Coffeescript]
+  words = [&ldquo;abc&rdquo;, &ldquo;bca&rdquo;, &ldquo;mkzp&rdquo;, &ldquo;cba&rdquo;]
+  result = {}
+  for word in words</p>
+
+<pre><code>key = (word.split '').sort().join ''
+result[key] = [] if not result[key]?
+result[key].push word
+</code></pre>
+
+<p>```</p>
+
+<p><code>ruby Group Anagrams [Ruby]
+words = ["abc", "bca", "mkzp", "cba"]
+words.group_by { |w| w.chars.sort.join }
+</code></p>
+]]></content>
+  </entry>
+  
+</feed>

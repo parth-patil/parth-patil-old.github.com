@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Tips | Parth Patil's Blog]]></title>
+  <link href="http://parth-patil.github.com/blog/categories/tips/atom.xml" rel="self"/>
+  <link href="http://parth-patil.github.com/"/>
+  <updated>2014-01-01T20:53:52-08:00</updated>
+  <id>http://parth-patil.github.com/</id>
+  <author>
+    <name><![CDATA[Parth Patil]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Custom functions in HBase shell]]></title>
+    <link href="http://parth-patil.github.com/blog/2013/01/10/custom-functions-in-hbase-shell/"/>
+    <updated>2013-01-10T09:04:00-08:00</updated>
+    <id>http://parth-patil.github.com/blog/2013/01/10/custom-functions-in-hbase-shell</id>
+    <content type="html"><![CDATA[<p>As many of you might know that the HBase shell is a jruby repl. So you can write ruby code in the
+shell. You can also save your custom ruby functions in <code>~/.irbrc</code> and the next time you
+start the hbase shell those functions will be available to you. At work I often need
+to truncate a bunch of HBase tables before I can begin my testing. I wanted to automate
+this. So I wrote the following custom function to truncate a list of tables and added
+it to my <code>~/.irbrc</code></p>
+
+<p>```ruby HBase shell custom function
+def truncate_tables()
+  tables = [</p>
+
+<pre><code>'table1',
+'table2',
+'table3'
+</code></pre>
+
+<p>  ]</p>
+
+<p>  tables.each {|x| truncate x}
+end
+```</p>
+
+<p>You have to restart your HBase shell for this function to be available in the shell.
+Now this custom function can be invoked from the shell as follows
+<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ruby-1.9.2-p136 :001 > truncate_tables</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>For more information refer to the following links:</p>
+
+<p><a href="http://wiki.apache.org/hadoop/Hbase/Shell">HBase Wiki</a></p>
+
+<p><a href="http://stackoverflow.com/questions/7256100/how-to-scan-hbase-from-hbase-shell-using-filter">Stack Overflow Question</a></p>
+]]></content>
+  </entry>
+  
+</feed>

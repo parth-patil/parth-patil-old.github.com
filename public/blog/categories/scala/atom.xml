@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: scala | Parth Patil's Blog]]></title>
+  <link href="http://parth-patil.github.com/blog/categories/scala/atom.xml" rel="self"/>
+  <link href="http://parth-patil.github.com/"/>
+  <updated>2014-01-01T20:53:52-08:00</updated>
+  <id>http://parth-patil.github.com/</id>
+  <author>
+    <name><![CDATA[Parth Patil]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Periodically sending JVM stats to StatsD in Scala]]></title>
+    <link href="http://parth-patil.github.com/blog/2014/01/01/periodically-sending-jvm-stats-to-statsd-in-scala/"/>
+    <updated>2014-01-01T15:10:00-08:00</updated>
+    <id>http://parth-patil.github.com/blog/2014/01/01/periodically-sending-jvm-stats-to-statsd-in-scala</id>
+    <content type="html"><![CDATA[<p>I have written a small library in Scala to allow periodic sending of JVM stats to StatsD server. One can include it in server written in Scala so that its JVM stats can be monitored over time. I am using the following <a href="https://github.com/etsy/statsd/blob/master/examples/StatsD.scala">Scala class</a> to send the stats to StatsD. Also the technique to extract JVM stats is borrowed from twitter&rsquo;s excellent <a href="https://github.com/twitter/ostrich">Ostrich library</a></p>
+
+<p>Following is the class that schedules sending of the stats periodically</p>
+
+<p>```scala
+package com.parthpatil.jvmstatsd</p>
+
+<p>import scala.collection.mutable
+import java.util.concurrent.{TimeUnit, Executors}</p>
+
+<p>class StatsSender(statsd: StatsD, numSchedulerThreads: Int = 2) {
+  // Tasks that need to be scheduled to send stats to statsd
+  private val tasks = mutable.ArrayBuffer<a href="">(StatsTask, Int)</a>
+  val fScheduler    = Executors.newScheduledThreadPool(numSchedulerThreads)</p>
+
+<p>  def addTask(task: StatsTask, secs: Int) {</p>
+
+<pre><code>task.setStatsD(statsd)
+tasks += ((task, secs))
+fScheduler.scheduleWithFixedDelay(task, 0, secs, TimeUnit.SECONDS)
+</code></pre>
+
+<p>  }</p>
+
+<p>  def getTasks(): Seq[(StatsTask, Int)] = {</p>
+
+<pre><code>tasks.toSeq
+</code></pre>
+
+<p>  }
+}
+```</p>
+
+<p>Following is the interface base class for a stats task that publishes stats to StatsD using the StatsD class</p>
+
+<p>```scala
+package com.parthpatil.jvmstatsd</p>
+
+<p>import java.text.DecimalFormat</p>
+
+<p>class StatsTask() extends Runnable {
+  protected var statsd: StatsD = null</p>
+
+<p>  // formatter to remove scientific notation from doubles
+  val formatter = new DecimalFormat(&ldquo;#&rdquo;)</p>
+
+<p>  override def run() { }
+  def setStatsD(sd: StatsD) { statsd = sd }
+}
+```</p>
+
+<p>Following is a sample implementation of the StatsTask that publishes JVM stats. You can write your won periodic stats publisher by extending StatsTask and adding it to StatsSender via addTask() method.</p>
+
+<p>```
+package com.parthpatil.jvmstatsd</p>
+
+<p>import java.lang.management.ManagementFactory
+import scala.collection.mutable
+import scala.collection.JavaConverters.<em>
+import com.twitter.conversions.string.</em></p>
+
+<p>class JvmStatsTask extends StatsTask {
+  override def run() {</p>
+
+<pre><code>getJvmGauges() foreach { case (k, v)  =&gt; statsd.gauge(k, formatter.format(v)) }
+getJvmCounters() foreach { case (k,v) =&gt; statsd.increment(k, v) }
+</code></pre>
+
+<p>  }</p>
+
+<p>  def getJvmGauges(): Map[String, Long] = {</p>
+
+<pre><code>val out = mutable.Map[String, Long]()
+
+val mem = ManagementFactory.getMemoryMXBean()
+
+val heap = mem.getHeapMemoryUsage()
+out += ("jvm.heap.committed" -&gt; heap.getCommitted())
+out += ("jvm.heap.max" -&gt; heap.getMax())
+out += ("jvm.heap.used" -&gt; heap.getUsed())
+
+val nonheap = mem.getNonHeapMemoryUsage()
+out += ("jvm.nonheap.committed" -&gt; nonheap.getCommitted())
+out += ("jvm.nonheap.max" -&gt; nonheap.getMax())
+out += ("jvm.nonheap.used" -&gt; nonheap.getUsed())
+
+val threads = ManagementFactory.getThreadMXBean()
+out += ("jvm.thread.daemon_count" -&gt; threads.getDaemonThreadCount().toLong)
+out += ("jvm.thread.count" -&gt; threads.getThreadCount().toLong)
+out += ("jvm.thread.peak_count" -&gt; threads.getPeakThreadCount().toLong)
+
+val runtime = ManagementFactory.getRuntimeMXBean()
+out += ("jvm.start_time" -&gt; runtime.getStartTime())
+out += ("jvm.uptime" -&gt; runtime.getUptime())
+
+val os = ManagementFactory.getOperatingSystemMXBean()
+out += ("jvm.num_cpus" -&gt; os.getAvailableProcessors().toLong)
+os match {
+  case unix: com.sun.management.UnixOperatingSystemMXBean =&gt;
+    out += ("jvm.fd.count" -&gt; unix.getOpenFileDescriptorCount)
+    out += ("jvm.fd.limit" -&gt; unix.getMaxFileDescriptorCount)
+  case _ =&gt;   // ew, Windows... or something
+}
+
+var postGCTotalUsage = 0L
+var currentTotalUsage = 0L
+ManagementFactory.getMemoryPoolMXBeans().asScala.foreach { pool =&gt;
+  val name = pool.getName.regexSub("""[^\w]""".r) { m =&gt; "." }
+  Option(pool.getCollectionUsage).foreach { usage =&gt;
+    out += ("jvm.post_gc." + name + ".used" -&gt; usage.getUsed)
+    postGCTotalUsage += usage.getUsed
+    out += ("jvm.post_gc." + name + ".max" -&gt; usage.getMax)
+  }
+  Option(pool.getUsage) foreach { usage =&gt;
+    out += ("jvm.current_mem." + name + ".used" -&gt; usage.getUsed)
+    currentTotalUsage += usage.getUsed
+    out += ("jvm.current_mem." + name + ".max" -&gt; usage.getMax)
+  }
+}
+out += ("jvm.post_gc.used" -&gt; postGCTotalUsage)
+out += ("jvm.current_mem.used" -&gt; currentTotalUsage)
+
+out.toMap
+</code></pre>
+
+<p>  }</p>
+
+<p>  def getJvmCounters(): Map[String, Long] = {</p>
+
+<pre><code>val out = mutable.Map[String, Long]()
+
+var totalCycles = 0L
+var totalTime = 0L
+
+ManagementFactory.getGarbageCollectorMXBeans().asScala.foreach { gc =&gt;
+  val name = gc.getName.regexSub("""[^\w]""".r) { m =&gt; "." }
+  val collectionCount = gc.getCollectionCount
+  out += ("jvm.gc." + name + ".cycles" -&gt; collectionCount)
+  val collectionTime = gc.getCollectionTime
+  out += ("jvm.gc." + name + ".msec" -&gt; collectionTime)
+  // note, these could be -1 if the collector doesn't have support for it.
+  if (collectionCount &gt; 0)
+    totalCycles += collectionCount
+  if (collectionTime &gt; 0)
+    totalTime += gc.getCollectionTime
+}
+out += ("jvm.gc.cycles" -&gt; totalCycles)
+out += ("jvm.gc.msec" -&gt; totalTime)
+
+out.toMap
+</code></pre>
+
+<p>  }
+}
+```</p>
+
+<p>Sample Usage</p>
+
+<p>```
+package com.parthpatil.jvmstatsd</p>
+
+<p>import akka.actor.ActorSystem
+import scala.concurrent.ExecutionContext.Implicits.global</p>
+
+<p>class SampleUsage {
+  def main(args: Array[String]) {</p>
+
+<pre><code>val actorSystem = ActorSystem("statsd-actor-system")
+val statsD = new StatsD(
+  context = actorSystem,
+  host = "localhost",
+  port = 8192)
+
+val statsSender = new StatsSender(statsD)
+
+// Create the JvmStatsTask that publishes stats every 10 secs
+statsSender.addTask(task = new JvmStatsTask, secs = 10)
+</code></pre>
+
+<p>  }
+}
+```</p>
+
+<p>You can find the full source in this <a href="https://github.com/parth-patil/JvmStatsD">repo</a></p>
+]]></content>
+  </entry>
+  
+</feed>
